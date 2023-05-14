@@ -10,27 +10,32 @@ import org.telegram.telegrambots.starter.SpringWebhookBot;
 @Component
 public class RenderWebHookHelloBot extends SpringWebhookBot {
 
-    // https://api.telegram.org/bot5887516482:AAEK4-rA4iHp-966sw4D2eQKA1NxiMfMNqk/setWebhook?url=https://b96f-45-134-212-34.eu.ngrok.io
+    private final TelegramConfig telegramConfig;
 
-    public RenderWebHookHelloBot() {
+    // https://api.telegram.org/bot5887516482:AAEK4-rA4iHp-966sw4D2eQKA1NxiMfMNqk/setWebhook?url=https://0ffd-45-134-212-34.eu.ngrok.io
+
+    public RenderWebHookHelloBot(TelegramConfig telegramConfig) {
         super(
-                SetWebhook.builder().url("https://1a07-151-249-131-14.eu.ngrok.io").build(),
-        "5887516482:AAEK4-rA4iHp-966sw4D2eQKA1NxiMfMNqk");
+                SetWebhook.builder().url(telegramConfig.getPath()).build(),
+                telegramConfig.getBotToken());
+        this.telegramConfig = telegramConfig;
     }
 
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
         System.out.println(update);
-        return new SendMessage(update.getMessage().getChatId().toString(), "Hello dod!");
+        return SendMessage.builder()
+                .chatId(update.getMessage().getChatId())
+                .text("Hello dod!").build();
     }
 
     @Override
     public String getBotPath() {
-        return "https://1a07-151-249-131-14.eu.ngrok.io";
+        return telegramConfig.getPath();
     }
 
     @Override
     public String getBotUsername() {
-        return "RenderHelloBot";
+        return telegramConfig.getUsername();
     }
 }
